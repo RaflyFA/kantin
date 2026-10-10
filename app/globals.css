@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@theme {
+  --font-bubbly: var(--font-fredoka), cursive, sans-serif;
+  --font-sans: var(--font-nunito), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  --color-maroon: #8d1720;
+  --color-maroon-hover: #ab1d29;
+  --color-orange-kopma: #f59e0b;
+  --color-orange-bright: #ff7b25;
+  --color-orange-soft: #fef3c7;
+  --color-ink: #261614;
+  --color-cream: #fffaf3;
+  --color-cream-subtle: #fff3e2;
+  --color-cream-card: #feeed9;
+  --color-paper: #ffffff;
+  --color-pastel-pink: #ffe4e9;
+  --color-pastel-green: #e1f7e7;
+  --color-pastel-yellow: #fef9c3;
+  --color-pastel-blue: #e0f2fe;
+  --color-muted-custom: #76635d;
+  --color-line: #efdfd0;
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(8px) rotate(-2deg);
+  }
+}
+
+@keyframes wiggle-soft {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@utility animate-float {
+  animation: float-gentle 3.5s ease-in-out infinite;
+}
+
+@utility animate-float-reverse {
+  animation: float-reverse 4s ease-in-out infinite;
+}
+
+@utility animate-wiggle {
+  animation: wiggle-soft 2.5s ease-in-out infinite;
+}
+
+@utility shadow-pop-sm {
+  box-shadow: 0 4px 0 #261614;
+}
+
+@utility shadow-pop {
+  box-shadow: 0 6px 0 #261614;
+}
+
+@utility shadow-pop-maroon {
+  box-shadow: 0 6px 0 #8d1720;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
