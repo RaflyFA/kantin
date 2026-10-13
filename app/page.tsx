@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { AtSign, ArrowRight, Check, Menu, Minus, Plus, ShoppingBag, X } from 'lucide-react'
+import { AtSign, ArrowRight, Check, ChevronDown, Menu, Minus, Plus, ShoppingBag, Sparkles, X } from 'lucide-react'
 
 const categories = [
   { id: 'best', label: 'Paling dicari' },
@@ -24,6 +24,8 @@ interface MenuItem {
   visual?: string
   tag: string
   details?: string[]
+  isSnackbox?: boolean
+  snackTier?: '7k' | '8k' | '10k'
 }
 
 const menus: MenuItem[] = [
@@ -96,18 +98,270 @@ const menus: MenuItem[] = [
     details: ['Nasi', 'Ayam (Serundeng / Kecap)', 'Tempe Goreng', 'Tahu Goreng', 'Kerupuk Udang', 'Oseng Bihun', 'Lalap', 'Sambel', 'Air Putih'],
   },
 
-  // SNACKBOX
+  // SNACKBOX (3 TIER HARGA: 7K, 8K, 10K DENGAN KUSTOMISASI PAKET)
   {
     id: 18,
     category: 'snack',
-    name: 'Snackbox Kampus Ceria',
-    desc: 'Paket box snack praktis berisi risoles renyah, kue manis lezat, dan air mineral cup.',
+    name: 'Snackbox Paket 7K',
+    desc: 'Pilihan snackbox ekonomis ramah kantong mahasiswa (5 pilihan paket varian kue & snack) + Air Cup.',
+    price: 7000,
+    image: '/poto_produk/snackbox.jpeg',
+    visual: 'snack',
+    tag: 'Paket 7K',
+    isSnackbox: true,
+    snackTier: '7k',
+  },
+  {
+    id: 19,
+    category: 'snack',
+    name: 'Snackbox Paket 8K',
+    desc: 'Paket snackbox favorit untuk seminar, rapat ormawa & acara kampus (5 pilihan paket) + Air Cup.',
+    price: 8000,
+    image: '/poto_produk/snackbox.jpeg',
+    visual: 'snack',
+    tag: 'Paket 8K',
+    isSnackbox: true,
+    snackTier: '8k',
+  },
+  {
+    id: 20,
+    category: 'snack',
+    name: 'Snackbox Paket 10K',
+    desc: 'Paket snackbox komplit & istimewa (macaroni schotel, bolen pisang, pie, aneka kue) + Air Cup.',
     price: 10000,
     image: '/poto_produk/snackbox.jpeg',
     visual: 'snack',
-    tag: 'Acara & Rapat',
+    tag: 'Paket 10K',
+    isSnackbox: true,
+    snackTier: '10k',
   },
 ]
+
+// SNACKBOX DATA CONFIGURATION
+interface SnackSlot {
+  label: string
+  isChoice: boolean
+  options?: string[]
+}
+
+interface SnackPackage {
+  id: string
+  name: string
+  slots: SnackSlot[]
+}
+
+interface SnackTierConfig {
+  key: '7k' | '8k' | '10k'
+  menuId: number
+  title: string
+  price: number
+  packages: SnackPackage[]
+}
+
+const KUE_MANIS_OPTIONS = ['Agar Buah', 'Putu Ayu', 'Bolu Pisang', 'Dadar Gulung', 'Onde-Onde', 'Kue Sus']
+const KUE_ASIN_OPTIONS = ['Risoles', 'Lemper Isi Ayam', 'Talam Kentang', 'Talam Ebi', 'Ketan Serundeng']
+const BOLU_PASTEL_OPTIONS = ['Bolu Kukus', 'Pastel', 'Nagasari']
+const TRADISIONAL_OPTIONS = ['Lontong', 'Kue Lapis', 'Agar-Agar']
+const PIE_OPTIONS = ['Pie Buah', 'Pie Brownies']
+
+const snackboxConfigs: Record<'7k' | '8k' | '10k', SnackTierConfig> = {
+  '10k': {
+    key: '10k',
+    menuId: 20,
+    title: 'Snackbox Paket 10K',
+    price: 10000,
+    packages: [
+      {
+        id: 'paket-1',
+        name: 'Paket 1',
+        slots: [
+          { label: 'Macaroni Schotel', isChoice: false },
+          { label: 'Kue Tradisional 1', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Kue Tradisional 2', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-2',
+        name: 'Paket 2',
+        slots: [
+          { label: 'Bolen Pisang', isChoice: false },
+          { label: 'Kue Pilihan 1', isChoice: true, options: BOLU_PASTEL_OPTIONS },
+          { label: 'Kue Pilihan 2', isChoice: true, options: BOLU_PASTEL_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-3',
+        name: 'Paket 3',
+        slots: [
+          { label: 'Pilihan Pie', isChoice: true, options: PIE_OPTIONS },
+          { label: 'Pilihan Kue Manis', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Kue Asin / Gurih', isChoice: true, options: KUE_ASIN_OPTIONS },
+          { label: 'Pilihan Tradisional', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-4',
+        name: 'Paket 4',
+        slots: [
+          { label: 'Pilihan Kue Manis 1', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Kue Manis 2', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Kue Asin 1', isChoice: true, options: KUE_ASIN_OPTIONS },
+          { label: 'Pilihan Kue Asin 2', isChoice: true, options: KUE_ASIN_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-5',
+        name: 'Paket 5',
+        slots: [
+          { label: 'Pilihan Kue Asin / Gurih', isChoice: true, options: KUE_ASIN_OPTIONS },
+          { label: 'Pilihan Kue 1', isChoice: true, options: BOLU_PASTEL_OPTIONS },
+          { label: 'Pilihan Kue 2', isChoice: true, options: BOLU_PASTEL_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+    ],
+  },
+  '8k': {
+    key: '8k',
+    menuId: 19,
+    title: 'Snackbox Paket 8K',
+    price: 8000,
+    packages: [
+      {
+        id: 'paket-1',
+        name: 'Paket 1',
+        slots: [
+          { label: 'Pilihan Pie', isChoice: true, options: PIE_OPTIONS },
+          { label: 'Pilihan Kue Manis', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Kue Asin / Gurih', isChoice: true, options: KUE_ASIN_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-2',
+        name: 'Paket 2',
+        slots: [
+          { label: 'Pilihan Kue Manis 1', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Kue Asin / Gurih', isChoice: true, options: KUE_ASIN_OPTIONS },
+          { label: 'Pilihan Kue Manis 2', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-3',
+        name: 'Paket 3',
+        slots: [
+          { label: 'Brownies Kukus', isChoice: false },
+          { label: 'Pilihan Kue', isChoice: true, options: BOLU_PASTEL_OPTIONS },
+          { label: 'Pilihan Tradisional 1', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Pilihan Tradisional 2', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-4',
+        name: 'Paket 4',
+        slots: [
+          { label: 'Pilihan Kue Manis', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Kue', isChoice: true, options: BOLU_PASTEL_OPTIONS },
+          { label: 'Pilihan Tradisional 1', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Pilihan Tradisional 2', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-5',
+        name: 'Paket 5',
+        slots: [
+          { label: 'Pilihan Kue Manis', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Tradisional 1', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Pilihan Tradisional 2', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Pilihan Tradisional 3', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+    ],
+  },
+  '7k': {
+    key: '7k',
+    menuId: 18,
+    title: 'Snackbox Paket 7K',
+    price: 7000,
+    packages: [
+      {
+        id: 'paket-1',
+        name: 'Paket 1',
+        slots: [
+          { label: 'Pilihan Kue Manis 1', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Kue Manis 2', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Kue Manis 3', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-2',
+        name: 'Paket 2',
+        slots: [
+          { label: 'Pilihan Pie', isChoice: true, options: PIE_OPTIONS },
+          { label: 'Pilihan Kue', isChoice: true, options: BOLU_PASTEL_OPTIONS },
+          { label: 'Pilihan Tradisional', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-3',
+        name: 'Paket 3',
+        slots: [
+          { label: 'Pilihan Kue Manis', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Pilihan Kue Asin / Gurih', isChoice: true, options: KUE_ASIN_OPTIONS },
+          { label: 'Pilihan Tradisional', isChoice: true, options: TRADISIONAL_OPTIONS },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-4',
+        name: 'Paket 4',
+        slots: [
+          { label: 'Pilihan Kue Manis', isChoice: true, options: KUE_MANIS_OPTIONS },
+          { label: 'Lontong', isChoice: false },
+          { label: 'Kue Lapis', isChoice: false },
+          { label: 'Agar-Agar', isChoice: false },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+      {
+        id: 'paket-5',
+        name: 'Paket 5',
+        slots: [
+          { label: 'Pilihan Kue', isChoice: true, options: BOLU_PASTEL_OPTIONS },
+          { label: 'Lontong', isChoice: false },
+          { label: 'Kue Lapis', isChoice: false },
+          { label: 'Agar-Agar', isChoice: false },
+          { label: 'Air Cup', isChoice: false },
+        ],
+      },
+    ],
+  },
+}
+
+interface CartItem {
+  cartId: string
+  menuId: number
+  name: string
+  price: number
+  image?: string
+  visual?: string
+  quantity: number
+  snackDetails?: {
+    tierTitle: string
+    packageName: string
+    items: string[]
+  }
+}
 
 const price = (value: number) => `Rp${value.toLocaleString('id-ID')}`
 
@@ -179,7 +433,7 @@ function FoodVisual({
 
 export default function Page() {
   const [activeCategory, setActiveCategory] = useState('best')
-  const [cart, setCart] = useState<Record<number, number>>({})
+  const [cart, setCart] = useState<CartItem[]>([])
   const [cartOpen, setCartOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [customerName, setCustomerName] = useState('')
@@ -187,30 +441,152 @@ export default function Page() {
   const [nameTouched, setNameTouched] = useState(false)
   const [timeTouched, setTimeTouched] = useState(false)
 
+  // SNACKBOX CUSTOMIZER MODAL STATE
+  const [snackModalOpen, setSnackModalOpen] = useState(false)
+  const [activeSnackTier, setActiveSnackTier] = useState<'7k' | '8k' | '10k'>('10k')
+  const [activePackageId, setActivePackageId] = useState('paket-1')
+  const [snackSelections, setSnackSelections] = useState<Record<number, string>>({})
+  const [snackQuantity, setSnackQuantity] = useState(1)
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null)
+
   const isFormValid = customerName.trim().length > 0 && pickupTime.trim().length > 0
 
   const visibleMenus = useMemo(() => {
     if (activeCategory === 'best') {
-      return menus.filter((item) => [1, 2, 4, 6, 9, 11, 15, 16, 18].includes(item.id))
+      return menus.filter((item) => [1, 2, 4, 6, 9, 11, 15, 16, 19, 20].includes(item.id))
     }
     return menus.filter((item) => item.category === activeCategory)
   }, [activeCategory])
-  const cartItems = menus.filter((item) => cart[item.id])
-  const cartCount = Object.values(cart).reduce((total, count) => total + count, 0)
-  const total = cartItems.reduce((sum, item) => sum + item.price * (cart[item.id] || 0), 0)
 
-  function addToCart(id: number) {
-    setCart((current) => ({ ...current, [id]: (current[id] || 0) + 1 }))
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0)
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+
+  // OPEN SNACKBOX MODAL
+  function openSnackModal(tier: '7k' | '8k' | '10k' = '10k') {
+    setActiveSnackTier(tier)
+    setActivePackageId('paket-1')
+    setSnackQuantity(1)
+    setOpenDropdown(null)
+
+    // Pre-fill default choices for paket-1
+    const targetConfig = snackboxConfigs[tier]
+    const pkg = targetConfig.packages[0]
+    const initialChoices: Record<number, string> = {}
+    pkg.slots.forEach((slot, idx) => {
+      if (slot.isChoice && slot.options && slot.options.length > 0) {
+        initialChoices[idx] = slot.options[0]
+      }
+    })
+    setSnackSelections(initialChoices)
+    setSnackModalOpen(true)
   }
-  function changeCart(id: number, delta: number) {
+
+  // SWITCH PACKAGE INSIDE MODAL
+  function handleSelectPackage(pkgId: string) {
+    setActivePackageId(pkgId)
+    setOpenDropdown(null)
+    const targetConfig = snackboxConfigs[activeSnackTier]
+    const pkg = targetConfig.packages.find((p) => p.id === pkgId) || targetConfig.packages[0]
+    const initialChoices: Record<number, string> = {}
+    pkg.slots.forEach((slot, idx) => {
+      if (slot.isChoice && slot.options && slot.options.length > 0) {
+        initialChoices[idx] = slot.options[0]
+      }
+    })
+    setSnackSelections(initialChoices)
+  }
+
+  // ADD REGULAR MENU ITEM TO CART
+  function addToCart(menuItem: MenuItem) {
+    if (menuItem.isSnackbox) {
+      openSnackModal(menuItem.snackTier || '10k')
+      return
+    }
+
+    const cartId = `reg-${menuItem.id}`
     setCart((current) => {
-      const next = Math.max(0, (current[id] || 0) + delta)
-      const updated = { ...current }
-      if (next === 0) delete updated[id]
-      else updated[id] = next
-      return updated
+      const existing = current.find((item) => item.cartId === cartId)
+      if (existing) {
+        return current.map((item) =>
+          item.cartId === cartId ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      }
+      return [
+        ...current,
+        {
+          cartId,
+          menuId: menuItem.id,
+          name: menuItem.name,
+          price: menuItem.price,
+          image: menuItem.image,
+          visual: menuItem.visual,
+          quantity: 1,
+        },
+      ]
     })
   }
+
+  // ADD CUSTOMIZED SNACKBOX TO CART
+  function handleAddSnackboxToCart() {
+    const tierConfig = snackboxConfigs[activeSnackTier]
+    const pkg = tierConfig.packages.find((p) => p.id === activePackageId) || tierConfig.packages[0]
+
+    const chosenItems = pkg.slots.map((slot, idx) => {
+      if (slot.isChoice && slot.options) {
+        return snackSelections[idx] || slot.options[0]
+      }
+      return slot.label
+    })
+
+    const cartId = `snack-${activeSnackTier}-${pkg.id}-${chosenItems.join('-').toLowerCase().replace(/\s+/g, '')}`
+
+    setCart((current) => {
+      const existing = current.find((item) => item.cartId === cartId)
+      if (existing) {
+        return current.map((item) =>
+          item.cartId === cartId ? { ...item, quantity: item.quantity + snackQuantity } : item
+        )
+      }
+      return [
+        ...current,
+        {
+          cartId,
+          menuId: tierConfig.menuId,
+          name: tierConfig.title,
+          price: tierConfig.price,
+          image: '/poto_produk/snackbox.jpeg',
+          visual: 'snack',
+          quantity: snackQuantity,
+          snackDetails: {
+            tierTitle: tierConfig.title,
+            packageName: pkg.name,
+            items: chosenItems,
+          },
+        },
+      ]
+    })
+
+    setSnackModalOpen(false)
+    setCartOpen(true)
+  }
+
+  // CHANGE CART ITEM QUANTITY
+  function changeCart(cartId: string, delta: number) {
+    setCart((current) =>
+      current
+        .map((item) => {
+          if (item.cartId === cartId) {
+            const nextQty = item.quantity + delta
+            return { ...item, quantity: nextQty }
+          }
+          return item
+        })
+        .filter((item) => item.quantity > 0)
+    )
+  }
+
+  const currentTierConfig = snackboxConfigs[activeSnackTier]
+  const currentPackage = currentTierConfig.packages.find((p) => p.id === activePackageId) || currentTierConfig.packages[0]
 
   return (
     <main className="overflow-hidden bg-cream min-h-screen text-ink font-sans pt-[86px] max-[720px]:pt-[70px]">
@@ -237,6 +613,9 @@ export default function Page() {
             <a className="py-2 px-4 rounded-full hover:bg-orange-soft hover:text-maroon transition-all" href="#tentang">
               Tentang Kami
             </a>
+            <a className="py-2 px-4 rounded-full hover:bg-orange-soft hover:text-maroon transition-all" href="#alur-snackbox">
+              Snackbox
+            </a>
             <a className="py-2 px-4 rounded-full hover:bg-orange-soft hover:text-maroon transition-all" href="#menu">
               Menu
             </a>
@@ -262,8 +641,8 @@ export default function Page() {
             {/* HAMBURGER / CLOSE BUTTON TOGGLE */}
             <button
               className={`hidden max-[720px]:grid place-items-center w-11 h-11 rounded-full border-2 transition-all duration-200 cursor-pointer ${menuOpen
-                  ? 'bg-maroon text-white border-maroon shadow-sm'
-                  : 'bg-white text-ink border-line hover:border-maroon/50 shadow-xs'
+                ? 'bg-maroon text-white border-maroon shadow-sm'
+                : 'bg-white text-ink border-line hover:border-maroon/50 shadow-xs'
                 }`}
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={menuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
@@ -288,36 +667,33 @@ export default function Page() {
           }`}
       >
         <div className="flex flex-col gap-2">
-
           <a
-            className="flex items-center justify-between text-[15px] py-4 font-bubbly font-bold text-ink  hover:text-maroon transition-all border border-transparent"
+            className="flex items-center justify-between text-[15px] py-3 font-bubbly font-bold text-ink hover:text-maroon transition-all"
             href="#tentang"
             onClick={() => setMenuOpen(false)}
           >
             <span>Tentang Kami</span>
-
           </a>
           <a
-            className="flex items-center justify-between text-[15px] font-bubbly font-bold text-ink  hover:text-maroon transition-all border border-transparent"
+            className="flex items-center justify-between text-[15px] py-3 font-bubbly font-bold text-ink hover:text-maroon transition-all"
+            href="#alur-snackbox"
+            onClick={() => setMenuOpen(false)}
+          >
+            <span>Snackbox Acara</span>
+          </a>
+          <a
+            className="flex items-center justify-between text-[15px] py-3 font-bubbly font-bold text-ink hover:text-maroon transition-all"
             href="#menu"
             onClick={() => setMenuOpen(false)}
           >
             <span>Pilihan Menu</span>
-
           </a>
-        </div>
-
-        <div className="pt-4 border-t border-line/60">
-          
-          
         </div>
       </div>
 
       {/* HERO SECTION */}
       <section className="relative flex items-center min-h-[540px] py-[44px] pb-[60px] max-lg:min-h-0 max-lg:py-[32px] max-w-[1160px] w-[calc(100%-48px)] mx-auto max-[720px]:w-[calc(100%-28px)] max-[720px]:max-w-[560px]" id="top">
         <div className="relative z-10 w-full lg:w-[55%]">
-
-
           <h1 className="my-[12px] mb-[28px] text-maroon font-bubbly text-[clamp(44px,5.8vw,74px)] leading-[1.04] tracking-tight max-[720px]:text-[clamp(38px,12vw,56px)]">
             Enaknya makan,<br />
             <span className="text-orange-bright relative inline-block">
@@ -346,8 +722,6 @@ export default function Page() {
               Tentang Kami
             </a>
           </div>
-
-
         </div>
 
         {/* HERO LOGO AREA (HIDDEN ON MOBILE & TABLET) */}
@@ -387,22 +761,21 @@ export default function Page() {
               target="_blank"
               rel="noreferrer"
             >
-              <AtSign size={16} /> @kantinkopma_kopmaunsil
+              <AtSign size={16} /> @kantinkopma_
             </a>
           </div>
         </div>
       </section>
 
-      {/* QUICK STRIP: ALUR PEMESANAN */}
+      {/* QUICK STRIP: ALUR PEMESANAN UMUM */}
       <section className="py-10 max-w-[1160px] w-[calc(100%-48px)] mx-auto max-[720px]:w-[calc(100%-28px)] max-[720px]:max-w-[560px]">
         <div className="text-center mb-7">
           <span className="inline-block py-1 px-4 rounded-full bg-white border border-line text-maroon text-[11px] font-extrabold uppercase tracking-wider shadow-xs mb-2">
-            Alur Pemesanan
+            Alur Pemesanan Cepat
           </span>
           <h2 className="text-maroon font-bubbly font-bold text-[clamp(22px,3.2vw,30px)] leading-tight">
             Cara Pesan Makanan di Kantin Kopma
           </h2>
-
         </div>
 
         <div className="grid grid-cols-3 gap-5 max-[720px]:grid-cols-1 max-[720px]:gap-3.5">
@@ -411,9 +784,8 @@ export default function Page() {
               01
             </div>
             <div>
-
               <strong className="block text-[14px] font-bubbly font-bold text-ink">Pilih Menu Sesukamu</strong>
-              <small className="block text-muted-custom text-[12px] mt-0.5">Dari baso aci sampai paket nasi 10K</small>
+              <small className="block text-muted-custom text-[12px] mt-0.5">Dari baso aci sampai snackbox rapat</small>
             </div>
           </div>
 
@@ -422,9 +794,8 @@ export default function Page() {
               02
             </div>
             <div>
-
               <strong className="block text-[14px] font-bubbly font-bold text-ink">Kirim Pesan ke WhatsApp</strong>
-              <small className="block text-muted-custom text-[12px] mt-0.5">Otomatis tersusun rapi tanpa repot ngetik</small>
+              <small className="block text-muted-custom text-[12px] mt-0.5">Otomatis tersusun rapi dengan nama & waktu</small>
             </div>
           </div>
 
@@ -433,25 +804,24 @@ export default function Page() {
               03
             </div>
             <div>
-
               <strong className="block text-[14px] font-bubbly font-bold text-ink">Tinggal Ambil di Kantin</strong>
-              <small className="block text-muted-custom text-[12px] mt-0.5">Makanan siap hangat saat kamu tiba</small>
+              <small className="block text-muted-custom text-[12px] mt-0.5">Pesanan disiapkan hangat & tepat waktu</small>
             </div>
           </div>
         </div>
       </section>
 
+      
+
       {/* MENU SECTION */}
       <section className="py-[72px] pb-[88px] max-[720px]:py-[48px] max-[720px]:pb-[58px] max-w-[1160px] w-[calc(100%-48px)] mx-auto max-[720px]:w-[calc(100%-28px)] max-[720px]:max-w-[560px]" id="menu">
         <div className="flex items-end justify-between max-[720px]:items-start max-[720px]:flex-col max-[720px]:gap-3">
           <div>
-
             <h2 className="text-maroon font-bubbly font-bold text-[clamp(34px,4.2vw,50px)] leading-[1.05]">
               Lagi pengen ngemil <br className="hidden max-[720px]:inline" />
               <span className="text-orange-bright">atau makan berat?</span>
             </h2>
           </div>
-
         </div>
 
         {/* TEXT-ONLY CATEGORY PILLS */}
@@ -473,6 +843,8 @@ export default function Page() {
           })}
         </div>
 
+        
+
         {/* MENU GRID */}
         <div className="grid grid-cols-3 gap-[22px] max-[720px]:grid-cols-2 max-[720px]:gap-[14px] max-[380px]:grid-cols-1">
           {visibleMenus.map((item) => (
@@ -485,6 +857,7 @@ export default function Page() {
                 <span className="absolute top-[22px] left-[22px] rounded-full py-1 px-3 bg-white/95 text-maroon text-[10px] font-bubbly font-extrabold shadow-sm border border-line">
                   {item.tag}
                 </span>
+                
               </div>
 
               <div className="pt-1 px-5 pb-5 max-[720px]:px-4 max-[720px]:pb-4 flex flex-col flex-1 justify-between">
@@ -492,6 +865,7 @@ export default function Page() {
                   <h3 className="text-ink font-bubbly text-[16px] font-bold max-[720px]:text-[14px] leading-snug">
                     {item.name}
                   </h3>
+
                   {item.details && item.details.length > 0 ? (
                     <div className="mt-2.5 p-2.5 rounded-2xl bg-orange-soft/30 border border-orange-soft/60">
                       <span className="block text-[10px] font-extrabold uppercase text-orange-bright tracking-wider mb-1 font-bubbly">
@@ -506,6 +880,8 @@ export default function Page() {
                         ))}
                       </ul>
                     </div>
+                  ) : item.isSnackbox ? (
+                    null
                   ) : (
                     <p className="min-h-[36px] mt-1.5 text-muted-custom text-[12px] leading-[1.5] max-[720px]:text-[11px] max-[720px]:line-clamp-2">
                       {item.desc}
@@ -513,17 +889,29 @@ export default function Page() {
                   )}
                 </div>
 
-                <div className="flex items-center justify-between mt-4 pt-3 border-t border-line/60">
-                  <strong className="text-maroon font-bubbly font-extrabold text-[19px] max-[720px]:text-[16px]">
+                <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-line/60">
+                  <strong className="text-maroon font-bubbly font-extrabold text-[18px] max-[720px]:text-[15px] shrink-0">
                     {price(item.price)}
                   </strong>
-                  <button
-                    className="grid place-items-center w-10 h-10 rounded-full bg-orange-kopma text-maroon hover:bg-maroon hover:text-white transition-all duration-200 cursor-pointer shadow-sm active:translate-y-0.5"
-                    onClick={() => addToCart(item.id)}
-                    aria-label={`Tambah ${item.name} ke keranjang`}
-                  >
-                    <Plus size={20} strokeWidth={2.5} />
-                  </button>
+
+                  {item.isSnackbox ? (
+                    <button
+                      className="shrink-0 inline-flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-full bg-orange-kopma text-maroon hover:bg-maroon hover:text-white transition-all duration-200 cursor-pointer shadow-sm text-[12px] font-bubbly font-bold whitespace-nowrap active:translate-y-0.5"
+                      onClick={() => openSnackModal(item.snackTier || '10k')}
+                      aria-label={`Kustomisasi ${item.name}`}
+                    >
+                      <span className="whitespace-nowrap">Pilih Isian</span>
+                      <ArrowRight size={13} className="shrink-0" />
+                    </button>
+                  ) : (
+                    <button
+                      className="grid place-items-center w-10 h-10 rounded-full bg-orange-kopma text-maroon hover:bg-maroon hover:text-white transition-all duration-200 cursor-pointer shadow-sm active:translate-y-0.5 shrink-0"
+                      onClick={() => addToCart(item)}
+                      aria-label={`Tambah ${item.name} ke keranjang`}
+                    >
+                      <Plus size={20} strokeWidth={2.5} />
+                    </button>
+                  )}
                 </div>
               </div>
             </article>
@@ -546,9 +934,7 @@ export default function Page() {
             </div>
           </a>
 
-          <p className="text-[13px] text-orange-soft/90 max-[720px]:text-[12px]">
-            Sahabat setia perut mahasiswa di setiap jeda kuliah.
-          </p>
+          
 
           <a
             className="inline-flex items-center gap-2 py-2.5 px-5 rounded-full bg-white text-maroon text-[12px] font-bubbly font-black hover:bg-orange-soft transition-all shadow-sm"
@@ -560,6 +946,195 @@ export default function Page() {
           </a>
         </div>
       </footer>
+
+      {/* SNACKBOX CUSTOMIZER MODAL */}
+      {snackModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/60 backdrop-blur-xs transition-opacity"
+          onClick={() => setSnackModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-[540px] max-h-[90vh] overflow-y-auto rounded-[32px] bg-white border-2 border-line shadow-2xl p-6 max-[480px]:p-5 flex flex-col justify-between"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div>
+              {/* MODAL HEADER */}
+              <div className="flex items-start justify-between pb-4 border-b border-line">
+                <div>
+                  <h3 className="text-maroon font-bubbly font-bold text-[22px] leading-tight">
+                    {currentTierConfig.title}
+                  </h3>
+                  
+                </div>
+                <button
+                  onClick={() => setSnackModalOpen(false)}
+                  className="grid place-items-center w-9 h-9 rounded-full bg-cream border border-line text-maroon hover:bg-orange-soft transition-colors cursor-pointer shrink-0"
+                  aria-label="Tutup kustomisasi"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* PACKAGE SELECTOR PILLS (Paket 1 s.d. 5) */}
+              <div className="mt-4">
+                <label className="block text-[11px] font-bubbly font-bold text-muted-custom uppercase tracking-wider mb-1.5">
+                  Pilih Paket (1 - 5):
+                </label>
+                <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                  {currentTierConfig.packages.map((pkg) => {
+                    const isSelected = pkg.id === activePackageId
+                    return (
+                      <button
+                        key={pkg.id}
+                        type="button"
+                        onClick={() => handleSelectPackage(pkg.id)}
+                        className={`shrink-0 py-1.5 px-3.5 rounded-full border-2 text-[12px] font-bubbly font-bold transition-all cursor-pointer ${isSelected
+                          ? 'border-orange-bright bg-orange-bright text-white shadow-xs'
+                          : 'border-line bg-white text-ink hover:border-orange-bright/50'
+                          }`}
+                      >
+                        {pkg.name}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* SLOTS & CHOICES LIST */}
+              <div className="mt-4">
+                <label className="block text-[11px] font-bubbly font-bold text-muted-custom uppercase tracking-wider mb-2">
+                  Rincian & Pilihan Isian:
+                </label>
+                <div className="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
+                  {currentPackage.slots.map((slot, idx) => {
+                    const selectedVal = snackSelections[idx] || (slot.options ? slot.options[0] : slot.label)
+                    const isDropdownOpen = openDropdown === idx
+
+                    return (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-2xl bg-cream/40 border border-line flex flex-col gap-2 transition-all"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-[12px] font-bubbly font-bold text-ink flex items-center gap-1.5">
+                            {slot.label}
+                          </span>
+                        </div>
+
+                        {/* CUSTOM DROPDOWN SELECTOR UI */}
+                        {slot.isChoice && slot.options ? (
+                          <div className="relative">
+                            {/* Trigger Button */}
+                            <button
+                              type="button"
+                              onClick={() => setOpenDropdown(isDropdownOpen ? null : idx)}
+                              className={`w-full flex items-center justify-between bg-white border-2 rounded-2xl px-3.5 py-2.5 text-[12px] font-bubbly transition-all cursor-pointer shadow-2xs ${
+                                isDropdownOpen
+                                  ? 'border-maroon ring-2 ring-maroon/10'
+                                  : 'border-line hover:border-maroon/50'
+                              }`}
+                            >
+                              <span className="font-bold text-maroon">
+                                {selectedVal}
+                              </span>
+                              <ChevronDown
+                                size={15}
+                                className={`text-maroon transition-transform duration-200 shrink-0 ${
+                                  isDropdownOpen ? 'rotate-180' : ''
+                                }`}
+                              />
+                            </button>
+
+                            {/* Custom Dropdown Menu with UI */}
+                            {isDropdownOpen && (
+                              <div className="mt-2 p-1.5 bg-white border-2 border-orange-kopma/40 rounded-2xl shadow-md flex flex-col gap-1 transition-all">
+                                <span className="px-2.5 py-1 text-[10px] font-extrabold uppercase text-muted-custom tracking-wider font-bubbly">
+                                  Pilih varian kue:
+                                </span>
+                                <div className="grid grid-cols-1 gap-1 max-h-[160px] overflow-y-auto">
+                                  {slot.options.map((opt, optIdx) => {
+                                    const isSelected = selectedVal === opt
+                                    return (
+                                      <button
+                                        key={optIdx}
+                                        type="button"
+                                        onClick={() => {
+                                          setSnackSelections((prev) => ({
+                                            ...prev,
+                                            [idx]: opt,
+                                          }))
+                                          setOpenDropdown(null)
+                                        }}
+                                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[12px] font-bubbly text-left transition-all cursor-pointer ${
+                                          isSelected
+                                            ? 'bg-orange-soft text-maroon font-extrabold border border-orange-kopma/50'
+                                            : 'text-ink hover:bg-cream/80 hover:text-maroon'
+                                        }`}
+                                      >
+                                        <span>{opt}</span>
+                                        {isSelected && <Check size={14} className="text-maroon shrink-0" />}
+                                      </button>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : null}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* QUANTITY PICKER */}
+              <div className="mt-4 pt-3 border-t border-line flex items-center justify-between">
+                <div>
+                  <span className="block text-[12px] font-bubbly font-bold text-ink">Jumlah Box</span>
+                </div>
+                <div className="flex items-center gap-2 bg-cream/70 px-2.5 py-1 rounded-full border border-line">
+                  <button
+                    type="button"
+                    onClick={() => setSnackQuantity((q) => Math.max(1, q - 1))}
+                    className="grid place-items-center w-5 h-5 rounded-full bg-white text-maroon hover:bg-maroon hover:text-white transition-colors cursor-pointer shadow-2xs"
+                    aria-label="Kurangi jumlah box"
+                  >
+                    <Minus size={11} strokeWidth={2.5} />
+                  </button>
+                  <span className="text-[12px] font-bubbly font-black min-w-[20px] text-center">
+                    {snackQuantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSnackQuantity((q) => q + 1)}
+                    className="grid place-items-center w-5 h-5 rounded-full bg-white text-maroon hover:bg-maroon hover:text-white transition-colors cursor-pointer shadow-2xs"
+                    aria-label="Tambah jumlah box"
+                  >
+                    <Plus size={11} strokeWidth={2.5} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* MODAL FOOTER ACTION */}
+            <div className="mt-5 pt-4 border-t border-line flex items-center justify-between gap-3">
+              <div>
+                <span className="block text-[11px] text-muted-custom font-bold">Subtotal ({snackQuantity} box):</span>
+                <strong className="block text-maroon font-bubbly font-black text-[20px]">
+                  {price(currentTierConfig.price * snackQuantity)}
+                </strong>
+              </div>
+              <button
+                type="button"
+                onClick={handleAddSnackboxToCart}
+                className="inline-flex items-center gap-2 py-3.5 px-6 rounded-full bg-maroon hover:bg-maroon/90 text-white font-bubbly font-bold text-[13px] shadow-pop-maroon cursor-pointer transition-all active:translate-y-0.5"
+              >
+                <span>Masukkan ke Keranjang</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* CART DRAWER */}
       {cartOpen && (
@@ -590,7 +1165,7 @@ export default function Page() {
                 </button>
               </div>
 
-              {cartItems.length === 0 ? (
+              {cart.length === 0 ? (
                 <div className="grid place-items-center gap-3 py-24 text-muted-custom text-[14px] text-center">
                   <ShoppingBag size={42} className="text-muted-custom/60 mb-1" />
                   <p className="font-bubbly text-[16px] text-ink font-bold">Keranjangmu masih kosong</p>
@@ -604,43 +1179,57 @@ export default function Page() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3.5 mt-5">
-                  {cartItems.map((item) => (
-                    <div className="flex items-center gap-3.5 p-3 rounded-[22px] bg-white border border-line shadow-xs" key={item.id}>
-                      <FoodVisual image={item.image} alt={item.name} type={item.visual} size="small" />
-                      <div className="flex-1">
-                        <strong className="block text-[13px] font-bubbly font-bold text-ink leading-tight">
-                          {item.name}
-                        </strong>
-                        <span className="block mt-1 text-maroon text-[12px] font-extrabold">
-                          {price(item.price)}
-                        </span>
+                  {cart.map((item) => (
+                    <div className="flex flex-col gap-2 p-3 rounded-[22px] bg-white border border-line shadow-xs" key={item.cartId}>
+                      <div className="flex items-center gap-3.5">
+                        <FoodVisual image={item.image} alt={item.name} type={item.visual} size="small" />
+                        <div className="flex-1">
+                          <strong className="block text-[13px] font-bubbly font-bold text-ink leading-tight">
+                            {item.name}
+                          </strong>
+                          <span className="block mt-0.5 text-maroon text-[12px] font-extrabold">
+                            {price(item.price)}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-cream px-2 py-1 rounded-full border border-line">
+                          <button
+                            className="grid place-items-center w-6 h-6 rounded-full bg-white text-maroon hover:bg-maroon hover:text-white transition-colors cursor-pointer shadow-xs"
+                            onClick={() => changeCart(item.cartId, -1)}
+                            aria-label={`Kurangi ${item.name}`}
+                          >
+                            <Minus size={12} />
+                          </button>
+                          <span className="text-[12px] font-bubbly font-black min-w-[16px] text-center">
+                            {item.quantity}
+                          </span>
+                          <button
+                            className="grid place-items-center w-6 h-6 rounded-full bg-white text-maroon hover:bg-maroon hover:text-white transition-colors cursor-pointer shadow-xs"
+                            onClick={() => changeCart(item.cartId, 1)}
+                            aria-label={`Tambah ${item.name}`}
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 bg-cream px-2 py-1 rounded-full border border-line">
-                        <button
-                          className="grid place-items-center w-6 h-6 rounded-full bg-white text-maroon hover:bg-maroon hover:text-white transition-colors cursor-pointer shadow-xs"
-                          onClick={() => changeCart(item.id, -1)}
-                          aria-label={`Kurangi ${item.name}`}
-                        >
-                          <Minus size={12} />
-                        </button>
-                        <span className="text-[12px] font-bubbly font-black min-w-[16px] text-center">
-                          {cart[item.id]}
-                        </span>
-                        <button
-                          className="grid place-items-center w-6 h-6 rounded-full bg-white text-maroon hover:bg-maroon hover:text-white transition-colors cursor-pointer shadow-xs"
-                          onClick={() => changeCart(item.id, 1)}
-                          aria-label={`Tambah ${item.name}`}
-                        >
-                          <Plus size={12} />
-                        </button>
-                      </div>
+
+                      {/* SNACKBOX DETAIL BREAKDOWN IN CART */}
+                      {item.snackDetails && (
+                        <div className="pt-2 border-t border-line/50 text-[11px] bg-orange-soft/20 -mx-3 -mb-3 p-2.5 rounded-b-[20px]">
+                          <span className="font-bubbly font-bold text-maroon block mb-0.5">
+                            {item.snackDetails.packageName}:
+                          </span>
+                          <p className="text-muted-custom leading-relaxed">
+                            {item.snackDetails.items.join(' • ')}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-            {cartItems.length > 0 && (
+            {cart.length > 0 && (
               <div className="mt-6 pt-5 border-t border-line">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-muted-custom font-bold text-[13px]">Total Pembayaran</span>
@@ -662,8 +1251,8 @@ export default function Page() {
                       onBlur={() => setNameTouched(true)}
                       placeholder="Contoh: Rafly / Cindy"
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-[13px] bg-cream/40 focus:bg-white focus:outline-none transition-all ${nameTouched && !customerName.trim()
-                          ? 'border-red-400 focus:border-red-500'
-                          : 'border-line focus:border-maroon'
+                        ? 'border-red-400 focus:border-red-500'
+                        : 'border-line focus:border-maroon'
                         }`}
                     />
                     {nameTouched && !customerName.trim() && (
@@ -682,10 +1271,10 @@ export default function Page() {
                       value={pickupTime}
                       onChange={(e) => setPickupTime(e.target.value)}
                       onBlur={() => setTimeTouched(true)}
-                      placeholder="Contoh: Jam 12.15"
+                      placeholder="Contoh: Jam 12.15 / Besok 09.00"
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-[13px] bg-cream/40 focus:bg-white focus:outline-none transition-all ${timeTouched && !pickupTime.trim()
-                          ? 'border-red-400 focus:border-red-500'
-                          : 'border-line focus:border-maroon'
+                        ? 'border-red-400 focus:border-red-500'
+                        : 'border-line focus:border-maroon'
                         }`}
                     />
                     {timeTouched && !pickupTime.trim() && (
@@ -700,7 +1289,14 @@ export default function Page() {
                   <a
                     className="inline-flex items-center justify-center gap-2 rounded-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white text-[14px] shadow-md hover:-translate-y-0.5 active:translate-y-0.5 transition-all w-full cursor-pointer font-normal"
                     href={`https://wa.me/6289665234461?text=${encodeURIComponent(
-                      `Halo, saya mau pesan:\n\n*Data Pemesan:*\n- Atas Nama: ${customerName.trim()}\n- Waktu Ambil: ${pickupTime.trim()}\n\n*Daftar Pesanan:*\n${cartItems.map((item) => `- ${item.name} x${cart[item.id]}`).join('\n')}\n\n*Total:* ${price(total)}`
+                      `Halo, saya mau pesan:\n\n*Data Pemesan:*\n- Atas Nama: ${customerName.trim()}\n- Waktu Ambil: ${pickupTime.trim()}\n\n*Daftar Pesanan:*\n${cart
+                        .map((item) => {
+                          if (item.snackDetails) {
+                            return `- ${item.name} x${item.quantity} (${price(item.price * item.quantity)})\n  └ ${item.snackDetails.packageName}: ${item.snackDetails.items.join(', ')}`
+                          }
+                          return `- ${item.name} x${item.quantity} (${price(item.price * item.quantity)})`
+                        })
+                        .join('\n')}\n\n*Total:* ${price(total)}`
                     )}`}
                     target="_blank"
                     rel="noreferrer"

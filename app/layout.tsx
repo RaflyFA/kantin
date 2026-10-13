@@ -18,24 +18,19 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: 'Kantin Kopma UNSIL — Enaknya makan, gak perlu mikir',
+  title: 'Kantin Kopma UNSIL',
   description: 'Menu favorit mahasiswa UNSIL, harga bersahabat, dan pesan praktis lewat WhatsApp.',
-  generator: 'v0.app',
   icons: {
     icon: [
       {
+        url: '/Logo_Kantin - Copy.png',
+      },
+      {
         url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        sizes: '32x32',
       },
     ],
+    shortcut: '/Logo_Kantin - Copy.png',
     apple: '/apple-icon.png',
   },
 }
